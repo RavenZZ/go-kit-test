@@ -92,7 +92,7 @@ func (m *CountRequest) GetA() string {
 }
 
 type CountReply struct {
-	Count string `protobuf:"bytes,1,opt,name=count" json:"count,omitempty"`
+	Count int64  `protobuf:"varint,1,opt,name=count" json:"count,omitempty"`
 	Err   string `protobuf:"bytes,2,opt,name=err" json:"err,omitempty"`
 }
 
@@ -101,11 +101,11 @@ func (m *CountReply) String() string            { return proto.CompactTextString
 func (*CountReply) ProtoMessage()               {}
 func (*CountReply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
-func (m *CountReply) GetCount() string {
+func (m *CountReply) GetCount() int64 {
 	if m != nil {
 		return m.Count
 	}
-	return ""
+	return 0
 }
 
 func (m *CountReply) GetErr() string {
@@ -130,97 +130,97 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for Add service
+// Client API for StrService service
 
-type AddClient interface {
+type StrServiceClient interface {
 	Uppercase(ctx context.Context, in *UppercaseRequest, opts ...grpc.CallOption) (*UppercaseReply, error)
 	Count(ctx context.Context, in *CountRequest, opts ...grpc.CallOption) (*CountReply, error)
 }
 
-type addClient struct {
+type strServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewAddClient(cc *grpc.ClientConn) AddClient {
-	return &addClient{cc}
+func NewStrServiceClient(cc *grpc.ClientConn) StrServiceClient {
+	return &strServiceClient{cc}
 }
 
-func (c *addClient) Uppercase(ctx context.Context, in *UppercaseRequest, opts ...grpc.CallOption) (*UppercaseReply, error) {
+func (c *strServiceClient) Uppercase(ctx context.Context, in *UppercaseRequest, opts ...grpc.CallOption) (*UppercaseReply, error) {
 	out := new(UppercaseReply)
-	err := grpc.Invoke(ctx, "/pb.Add/Uppercase", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/pb.StrService/Uppercase", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *addClient) Count(ctx context.Context, in *CountRequest, opts ...grpc.CallOption) (*CountReply, error) {
+func (c *strServiceClient) Count(ctx context.Context, in *CountRequest, opts ...grpc.CallOption) (*CountReply, error) {
 	out := new(CountReply)
-	err := grpc.Invoke(ctx, "/pb.Add/Count", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/pb.StrService/Count", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for Add service
+// Server API for StrService service
 
-type AddServer interface {
+type StrServiceServer interface {
 	Uppercase(context.Context, *UppercaseRequest) (*UppercaseReply, error)
 	Count(context.Context, *CountRequest) (*CountReply, error)
 }
 
-func RegisterAddServer(s *grpc.Server, srv AddServer) {
-	s.RegisterService(&_Add_serviceDesc, srv)
+func RegisterStrServiceServer(s *grpc.Server, srv StrServiceServer) {
+	s.RegisterService(&_StrService_serviceDesc, srv)
 }
 
-func _Add_Uppercase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StrService_Uppercase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UppercaseRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AddServer).Uppercase(ctx, in)
+		return srv.(StrServiceServer).Uppercase(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Add/Uppercase",
+		FullMethod: "/pb.StrService/Uppercase",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AddServer).Uppercase(ctx, req.(*UppercaseRequest))
+		return srv.(StrServiceServer).Uppercase(ctx, req.(*UppercaseRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Add_Count_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StrService_Count_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AddServer).Count(ctx, in)
+		return srv.(StrServiceServer).Count(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Add/Count",
+		FullMethod: "/pb.StrService/Count",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AddServer).Count(ctx, req.(*CountRequest))
+		return srv.(StrServiceServer).Count(ctx, req.(*CountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Add_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Add",
-	HandlerType: (*AddServer)(nil),
+var _StrService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.StrService",
+	HandlerType: (*StrServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Uppercase",
-			Handler:    _Add_Uppercase_Handler,
+			Handler:    _StrService_Uppercase_Handler,
 		},
 		{
 			MethodName: "Count",
-			Handler:    _Add_Count_Handler,
+			Handler:    _StrService_Count_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -230,17 +230,18 @@ var _Add_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("stringsvc.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 192 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2f, 0x2e, 0x29, 0xca,
-	0xcc, 0x4b, 0x2f, 0x2e, 0x4b, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52,
-	0x52, 0xe0, 0x12, 0x08, 0x2d, 0x28, 0x48, 0x2d, 0x4a, 0x4e, 0x2c, 0x4e, 0x0d, 0x4a, 0x2d, 0x2c,
-	0x4d, 0x2d, 0x2e, 0x11, 0xe2, 0xe1, 0x62, 0x4c, 0x94, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x62,
-	0x4c, 0x54, 0x32, 0xe1, 0xe2, 0x43, 0x52, 0x51, 0x90, 0x53, 0x29, 0x24, 0xc0, 0xc5, 0x5c, 0x5c,
-	0x52, 0x04, 0x55, 0x01, 0x62, 0x82, 0x44, 0x52, 0x8b, 0x8a, 0x24, 0x98, 0x20, 0x22, 0xa9, 0x45,
-	0x45, 0x4a, 0x32, 0x5c, 0x3c, 0xce, 0xf9, 0xa5, 0x79, 0x25, 0xb8, 0xcc, 0xe4, 0x82, 0xca, 0x82,
-	0xcc, 0x13, 0xe1, 0x62, 0x4d, 0x06, 0xf1, 0xa0, 0xf2, 0x10, 0x0e, 0xa6, 0x99, 0x46, 0xd9, 0x5c,
-	0xcc, 0x8e, 0x29, 0x29, 0x42, 0xe6, 0x5c, 0x9c, 0x70, 0x07, 0x09, 0x89, 0xe8, 0x15, 0x24, 0xe9,
-	0xa1, 0xfb, 0x40, 0x4a, 0x08, 0x4d, 0xb4, 0x20, 0xa7, 0x52, 0x89, 0x41, 0x48, 0x9b, 0x8b, 0xd5,
-	0x19, 0x62, 0x34, 0x48, 0x1a, 0xd9, 0x79, 0x52, 0x7c, 0x48, 0x22, 0x60, 0xc5, 0x49, 0x6c, 0xe0,
-	0x30, 0x32, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x2f, 0x91, 0xcf, 0x10, 0x36, 0x01, 0x00, 0x00,
+	// 200 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x90, 0xc1, 0x8a, 0x83, 0x30,
+	0x18, 0x84, 0x37, 0x8a, 0x0b, 0xfe, 0x88, 0x2b, 0xc1, 0x83, 0xc8, 0x1e, 0x24, 0xa7, 0x85, 0x05,
+	0x0f, 0x6d, 0xa1, 0x0f, 0xe0, 0x1b, 0x28, 0x7d, 0x00, 0x0d, 0x3f, 0x45, 0x10, 0x4d, 0xff, 0x44,
+	0xc1, 0xb7, 0x2f, 0x51, 0x29, 0x62, 0xe9, 0x2d, 0xf3, 0xcd, 0x30, 0x99, 0x04, 0x7e, 0xb4, 0xa1,
+	0xb6, 0xbf, 0xeb, 0x49, 0xe6, 0x8a, 0x06, 0x33, 0x70, 0x47, 0x35, 0x22, 0x83, 0xe8, 0xa6, 0x14,
+	0x92, 0xac, 0x35, 0x96, 0xf8, 0x18, 0x51, 0x1b, 0x1e, 0x00, 0xab, 0x13, 0x96, 0xb1, 0x3f, 0xbf,
+	0x64, 0xb5, 0xb8, 0x40, 0xb8, 0x4b, 0xa8, 0x6e, 0xe6, 0x11, 0xb8, 0xda, 0xd0, 0x96, 0xb0, 0x47,
+	0x4b, 0x90, 0x28, 0x71, 0x56, 0x82, 0x44, 0xe2, 0x17, 0x82, 0x62, 0x18, 0x7b, 0xf3, 0xa9, 0x13,
+	0x36, 0xd7, 0xf6, 0xc5, 0xe0, 0x49, 0xab, 0x16, 0xdf, 0x2d, 0x57, 0xf1, 0xde, 0x79, 0x22, 0x80,
+	0xca, 0x50, 0x85, 0x34, 0xb5, 0x12, 0xf9, 0x15, 0xfc, 0xd7, 0x2e, 0x1e, 0xe7, 0xaa, 0xc9, 0x8f,
+	0x0f, 0x49, 0xf9, 0x81, 0xaa, 0x6e, 0x16, 0x5f, 0xfc, 0x1f, 0xbc, 0x62, 0xbd, 0xc1, 0xda, 0xfb,
+	0x95, 0x69, 0xb8, 0x23, 0x4b, 0xb8, 0xf9, 0x5e, 0xbe, 0xea, 0xfc, 0x0c, 0x00, 0x00, 0xff, 0xff,
+	0x9c, 0x9c, 0xb7, 0x5f, 0x3d, 0x01, 0x00, 0x00,
 }

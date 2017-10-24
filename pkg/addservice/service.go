@@ -9,17 +9,21 @@ import (
 // New new
 func New(logger log.Logger, requestCount metrics.Counter, requestLatency metrics.Histogram) service.StringService {
 	var svc service.StringService
-	// 注入logging
-	svc = loggingMiddleware{
-		logger: logger,
-		next:   svc,
-	}
+	{
+		// 注入服务实现
+		svc = service.NewStringService()
+		// 注入logging
+		svc = loggingMiddleware{
+			logger: logger,
+			next:   svc,
+		}
 
-	// 注入metrics
-	svc = instrumentingMiddleware{
-		requestCount:   requestCount,
-		requestLatency: requestLatency,
-		next:           svc,
+		// 注入metrics
+		svc = instrumentingMiddleware{
+			requestCount:   requestCount,
+			requestLatency: requestLatency,
+			next:           svc,
+		}
 	}
 
 	return svc

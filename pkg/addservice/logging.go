@@ -38,6 +38,6 @@ func (mw loggingMiddleware) Count(ctx context.Context, s string) (n int, err err
 		)
 	}(time.Now())
 
-	n = mw.next.Count(ctx, s)
+	n, err = mw.next.Count(ctx, s)
 	return
 }

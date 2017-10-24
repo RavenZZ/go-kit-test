@@ -34,6 +34,6 @@ func (mw instrumentingMiddleware) Count(ctx context.Context, s string) (n int, e
 		mw.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	n = mw.next.Count(ctx, s)
+	n, err = mw.next.Count(ctx, s)
 	return
 }

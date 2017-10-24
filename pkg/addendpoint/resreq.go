@@ -1,19 +1,19 @@
 package addendpoint
 
-type uppercaseRequest struct {
+type UppercaseRequest struct {
 	S string `json:"s"`
 }
 
-type uppercaseResponse struct {
+type UppercaseResponse struct {
 	V   string `json:"v"`
 	Err string `json:"err,omitempty"` // errors don't JSON-marshal, so we use a string
 }
 
-type countRequest struct {
+type CountRequest struct {
 	S string `json:"s"`
 }
 
-type countResponse struct {
+type CountResponse struct {
 	V   int    `json:"v"`
 	Err string `json:"err,omitempty"` // errors don't JSON-marshal, so we use a string
 }

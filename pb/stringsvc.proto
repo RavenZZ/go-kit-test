@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb;
 
-service Add {
+service StrService {
   rpc Uppercase (UppercaseRequest) returns (UppercaseReply) {}
 
   rpc Count (CountRequest) returns (CountReply) {}
@@ -22,6 +22,6 @@ message CountRequest {
 }
 
 message CountReply {
-    string count = 1;
+    int64 count = 1;
     string err = 2;
 }

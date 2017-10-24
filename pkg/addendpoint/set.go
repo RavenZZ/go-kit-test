@@ -5,6 +5,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/ravenzz/go-kit-test/pkg/service"
 
+	"context"
 	"github.com/go-kit/kit/metrics"
 )
 
@@ -31,4 +32,28 @@ func New(svc service.StringService, logger log.Logger, duration metrics.Histogra
 		UppercaseEndpoint: uppercaseEndpoint,
 		CountEndPoint:     countEndpoint,
 	}
+}
+
+//Uppercase(ctx context.Context, a string) (str string, err error)
+//Count(ctx context.Context, a string) (count int, err error)
+func (s Set) Uppercase(ctx context.Context, a string) (str string, err error) {
+	resp, err := s.UppercaseEndpoint(ctx, UppercaseRequest{
+		S: a,
+	})
+	if err != nil {
+		return "", err
+	}
+	response := resp.(UppercaseResponse)
+	return response.V, str2err(response.Err)
+}
+
+func (s Set) Count(ctx context.Context, a string) (count int, err error) {
+	resp, err := s.CountEndPoint(ctx, CountRequest{
+		S: a,
+	})
+	if err != nil {
+		return 0, err
+	}
+	response := resp.(CountResponse)
+	return response.V, str2err(response.Err)
 }
