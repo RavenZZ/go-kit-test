@@ -74,7 +74,6 @@ func main() {
 	svc = instrumentingMiddleware{
 		requestCount:   requestCount,
 		requestLatency: requestLatency,
-		countResult:    countResult,
 		next:           svc,
 	}
 

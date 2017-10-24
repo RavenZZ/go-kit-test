@@ -1,17 +1,19 @@
-package main
+package addservice
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	"github.com/go-kit/kit/metrics"
-	"golang.org/x/net/context"
+	"github.com/ravenzz/go-kit-test/pkg/service"
 )
 
 type instrumentingMiddleware struct {
 	requestCount   metrics.Counter
 	requestLatency metrics.Histogram
-	next           StringService
+	countResult    metrics.Histogram
+	next           service.StringService
 }
 
 func (mw instrumentingMiddleware) Uppercase(ctx context.Context, s string) (output string, err error) {
@@ -25,7 +27,7 @@ func (mw instrumentingMiddleware) Uppercase(ctx context.Context, s string) (outp
 	return
 }
 
-func (mw instrumentingMiddleware) Count(ctx context.Context, s string) (n int) {
+func (mw instrumentingMiddleware) Count(ctx context.Context, s string) (n int, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "count", "error", "false"}
 		mw.requestCount.With(lvs...).Add(1)
