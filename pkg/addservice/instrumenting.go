@@ -37,3 +37,16 @@ func (mw instrumentingMiddleware) Count(ctx context.Context, s string) (n int, e
 	n, err = mw.next.Count(ctx, s)
 	return
 }
+
+
+func (mw instrumentingMiddleware) Lowercase( ctx context.Context,s string) (output string, err error){
+	defer func(begin time.Time) {
+		lvs := []string{"method", "lowercase", "error", fmt.Sprint(err != nil)}
+		mw.requestCount.With(lvs...).Add(1)
+		mw.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+
+	output, err = mw.next.Lowercase(ctx,s)
+	return
+}

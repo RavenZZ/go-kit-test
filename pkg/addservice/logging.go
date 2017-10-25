@@ -41,3 +41,18 @@ func (mw loggingMiddleware) Count(ctx context.Context, s string) (n int, err err
 	n, err = mw.next.Count(ctx, s)
 	return
 }
+
+func (mw loggingMiddleware) Lowercase(ctx context.Context,s string) (output string, err error){
+	defer func(begin time.Time) {
+		mw.logger.Log(
+			"method", "lowercase",
+			"input", s,
+			"output", output,
+			"err", err,
+			"took", time.Since(begin),
+		)
+	}(time.Now())
+
+	output,err = mw.next.Lowercase(ctx,s)
+	return
+}

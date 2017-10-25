@@ -12,6 +12,7 @@ import (
 type Set struct {
 	UppercaseEndpoint endpoint.Endpoint
 	CountEndPoint     endpoint.Endpoint
+	LowercaseEndpoint endpoint.Endpoint
 }
 
 func New(svc service.StringService, logger log.Logger, duration metrics.Histogram) Set {
@@ -36,6 +37,8 @@ func New(svc service.StringService, logger log.Logger, duration metrics.Histogra
 
 //Uppercase(ctx context.Context, a string) (str string, err error)
 //Count(ctx context.Context, a string) (count int, err error)
+//Lowercase(ctx context.Context, a string) (str string, err error)
+
 func (s Set) Uppercase(ctx context.Context, a string) (str string, err error) {
 	resp, err := s.UppercaseEndpoint(ctx, UppercaseRequest{
 		S: a,
@@ -57,3 +60,16 @@ func (s Set) Count(ctx context.Context, a string) (count int, err error) {
 	response := resp.(CountResponse)
 	return response.V, str2err(response.Err)
 }
+
+
+func (s Set) Lowercase(ctx context.Context, a string)(str string, err error){
+	resp, err:= s.LowercaseEndpoint(ctx, LowercaseRequest{
+		S:a,
+	})
+	if err !=nil{
+		return  "" ,err
+	}
+	response:= resp.(LowercaseResponse)
+	return  response.V, str2err(response.Err)
+}
+

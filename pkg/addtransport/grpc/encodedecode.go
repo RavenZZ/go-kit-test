@@ -73,4 +73,32 @@ func encodeGRPCCountResponse(_ context.Context, response interface{}) (interface
 
 // Count End
 
-// func decodeGRPCCountResponse
+
+// Uppercase  Start
+
+func encodeGRPCLowercaseRequest(_ context.Context, grpcReq interface{}) (interface{},error){
+	req:= grpcReq.(*pb.LowercaseRequest)
+	return addendpoint.LowercaseRequest{S:req.A},nil
+}
+
+func decodeGRPCLowercaseRequest(_ context.Context, request interface{}) (interface{},error) {
+	req := request.(addendpoint.LowercaseRequest)
+	return &pb.LowercaseRequest{A: req.S}, nil
+}
+
+func encodeGRPCLowercaseResponse(_ context.Context, grpcReply interface{}) (interface{},error){
+	resp:= grpcReply.(*pb.LowercaseResponse)
+	return addendpoint.LowercaseResponse{V:resp.Str,Err:resp.Err},nil
+}
+
+func decodeGRPCLowercaseResponse(_ context.Context, response interface{}) (interface{},error){
+	resp:= response.(addendpoint.LowercaseResponse)
+	return &pb.LowercaseResponse{
+		Str:resp.V,
+		Err:resp.Err,
+	},nil
+}
+
+// Lowercase  End
+
+

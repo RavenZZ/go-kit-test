@@ -6,6 +6,8 @@ service StrService {
   rpc Uppercase (UppercaseRequest) returns (UppercaseReply) {}
 
   rpc Count (CountRequest) returns (CountReply) {}
+
+  rpc Lowercase(LowercaseRequest) returns (LowercaseResponse) {}
 }
 
 message UppercaseRequest {
@@ -23,5 +25,15 @@ message CountRequest {
 
 message CountReply {
     int64 count = 1;
+    string err = 2;
+}
+
+
+message LowercaseRequest {
+    string a = 1;
+}
+
+message LowercaseResponse {
+    string str = 1;
     string err = 2;
 }

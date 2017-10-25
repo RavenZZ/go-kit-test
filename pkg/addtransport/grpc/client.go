@@ -31,11 +31,11 @@ func NewGRPCClient(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger l
 			pb.UppercaseReply{},
 			grpctransport.ClientBefore(opentracing.ContextToGRPC(tracer, logger)),
 		).Endpoint()
-		upperEndpoint = opentracing.TraceClient(tracer, "Str")(upperEndpoint)
+		upperEndpoint = opentracing.TraceClient(tracer, "Upper")(upperEndpoint)
 		upperEndpoint = limiter(upperEndpoint)
 		upperEndpoint = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{
 			Name:        "Upper",
-			MaxRequests: 10000,
+			MaxRequests: 5,
 			Interval:    20 * time.Second,
 			Timeout:     20 * time.Second,
 			ReadyToTrip: nil,
@@ -56,11 +56,11 @@ func NewGRPCClient(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger l
 			pb.CountReply{},
 			grpctransport.ClientBefore(opentracing.ContextToGRPC(tracer, logger)),
 		).Endpoint()
-		countEndpoint = opentracing.TraceClient(tracer, "Str")(countEndpoint)
+		countEndpoint = opentracing.TraceClient(tracer, "Count")(countEndpoint)
 		countEndpoint = limiter(countEndpoint)
 		countEndpoint = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{
 			Name:        "Upper",
-			MaxRequests: 10000,
+			MaxRequests: 5,
 			Interval:    20 * time.Second,
 			Timeout:     20 * time.Second,
 			ReadyToTrip: nil,
@@ -70,9 +70,36 @@ func NewGRPCClient(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger l
 		}))(countEndpoint)
 	}
 
+	var lowerEndpoint endpoint.Endpoint
+	{
+		lowerEndpoint = grpctransport.NewClient(
+			conn,
+			"pb.StrService",
+			"Lower",
+			encodeGRPCLowercaseRequest,
+			decodeGRPCLowercaseResponse,
+			pb.LowercaseResponse{},
+			grpctransport.ClientBefore(opentracing.ContextToGRPC(tracer, logger)),
+		).Endpoint()
+		countEndpoint = opentracing.TraceClient(tracer, "Lower")(countEndpoint)
+		countEndpoint = limiter(countEndpoint)
+		countEndpoint = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{
+			Name:        "Lower",
+			MaxRequests: 5,
+			Interval:    20 * time.Second,
+			Timeout:     20 * time.Second,
+			ReadyToTrip: nil,
+			OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
+				// 这里应该提交报警, 状态异常或恢复
+			},
+		}))(countEndpoint)
+	}
+
+
 	return addendpoint.Set{
 		UppercaseEndpoint: upperEndpoint,
 		CountEndPoint:     countEndpoint,
+		LowercaseEndpoint: lowerEndpoint,
 	}
 
 }

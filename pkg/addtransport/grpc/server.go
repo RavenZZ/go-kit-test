@@ -14,6 +14,7 @@ import (
 type grpcServer struct {
 	uppercase grpctransport.Handler
 	count     grpctransport.Handler
+	lowercase grpctransport.Handler
 }
 
 func NewGRPCServer(endpoints addendpoint.Set, tracer stdopentracing.Tracer, logger log.Logger) pb.AddServer {
@@ -34,7 +35,6 @@ func NewGRPCServer(endpoints addendpoint.Set, tracer stdopentracing.Tracer, logg
 			append(options, grpctransport.ServerBefore(opentracing.GRPCToContext(tracer, "Count", logger)))...,
 		),
 	}
-
 }
 
 func (s *grpcServer) Uppercase(ctx context.Context, req *pb.UppercaseRequest) (*pb.UppercaseReply, error) {
@@ -52,3 +52,13 @@ func (s *grpcServer) Count(ctx context.Context, req *pb.CountRequest) (*pb.Count
 	}
 	return rep.(*pb.CountReply), nil
 }
+
+func (s *grpcServer) Lowercase(ctx context.Context,req *pb.LowercaseRequest) (*pb.LowercaseResponse,error){
+	_,rep, err:=s.lowercase.ServeGRPC(ctx,req)
+	if err !=nil{
+		return nil,err
+	}
+	return rep.(*pb.LowercaseResponse),nil
+}
+
+

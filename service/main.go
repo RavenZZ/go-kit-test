@@ -53,12 +53,13 @@ func main() {
 		Name:      "request_latency_microseconds",
 		Help:      "Total duration of requests in microseconds.",
 	}, fieldKeys)
-	countResult := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
-		Namespace: "my_group",
-		Subsystem: "string_service",
-		Name:      "count_result",
-		Help:      "The result of each count method.",
-	}, []string{}) // no fields here
+	//countResult := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
+	//	Namespace: "my_group",
+	//	Subsystem: "string_service",
+	//	Name:      "count_result",
+	//	Help:      "The result of each count method.",
+	//}, []string{}) // no fields here
+
 	// 定义Metrics End
 
 	var svc StringService

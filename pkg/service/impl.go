@@ -23,5 +23,13 @@ func (stringService) Count(_ context.Context, s string) (int, error) {
 	return len(s), nil
 }
 
+func (stringService) Lowercase(_ context.Context,s string) (string, error) {
+	if s == "" {
+		return "", ErrEmpty
+	}
+	return strings.ToLower(s), nil
+}
+
+
 // ErrEmpty is returned when input string is empty
 var ErrEmpty = errors.New("Empty string")
