@@ -26,13 +26,19 @@ func NewGRPCServer(endpoints addendpoint.Set, tracer stdopentracing.Tracer, logg
 			endpoints.UppercaseEndpoint,
 			decodeGRPCUppercaseRequest,
 			encodeGRPCUppercaseResponse,
-			append(options, grpctransport.ServerBefore(opentracing.GRPCToContext(tracer, "Upper", logger)))...,
+			append(options, grpctransport.ServerBefore(opentracing.GRPCToContext(tracer, "upper-grpc", logger)))...,
 		),
 		count: grpctransport.NewServer(
 			endpoints.CountEndPoint,
 			decodeGRPCCountRequest,
 			encodeGRPCCountResponse,
-			append(options, grpctransport.ServerBefore(opentracing.GRPCToContext(tracer, "Count", logger)))...,
+			append(options, grpctransport.ServerBefore(opentracing.GRPCToContext(tracer, "count-grpc", logger)))...,
+		),
+		lowercase: grpctransport.NewServer(
+			endpoints.LowercaseEndpoint,
+			decodeGRPCLowercaseRequest,
+			encodeGRPCLowercaseResponse,
+			append(options, grpctransport.ServerBefore(opentracing.GRPCToContext(tracer, "lower-grpc", logger)))...,
 		),
 	}
 }
@@ -53,12 +59,10 @@ func (s *grpcServer) Count(ctx context.Context, req *pb.CountRequest) (*pb.Count
 	return rep.(*pb.CountReply), nil
 }
 
-func (s *grpcServer) Lowercase(ctx context.Context,req *pb.LowercaseRequest) (*pb.LowercaseResponse,error){
-	_,rep, err:=s.lowercase.ServeGRPC(ctx,req)
-	if err !=nil{
-		return nil,err
+func (s *grpcServer) Lowercase(ctx context.Context, req *pb.LowercaseRequest) (*pb.LowercaseResponse, error) {
+	_, rep, err := s.lowercase.ServeGRPC(ctx, req)
+	if err != nil {
+		return nil, err
 	}
-	return rep.(*pb.LowercaseResponse),nil
+	return rep.(*pb.LowercaseResponse), nil
 }
-
-

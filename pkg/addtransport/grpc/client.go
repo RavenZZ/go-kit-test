@@ -1,6 +1,8 @@
 package grpc
 
 import (
+	"time"
+
 	"github.com/go-kit/kit/circuitbreaker"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"
@@ -14,7 +16,6 @@ import (
 	"github.com/ravenzz/go-kit-test/pkg/service"
 	"github.com/sony/gobreaker"
 	"google.golang.org/grpc"
-	"time"
 )
 
 func NewGRPCClient(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger log.Logger) service.StringService {
@@ -31,10 +32,10 @@ func NewGRPCClient(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger l
 			pb.UppercaseReply{},
 			grpctransport.ClientBefore(opentracing.ContextToGRPC(tracer, logger)),
 		).Endpoint()
-		upperEndpoint = opentracing.TraceClient(tracer, "Upper")(upperEndpoint)
+		upperEndpoint = opentracing.TraceClient(tracer, "upper-grpc")(upperEndpoint)
 		upperEndpoint = limiter(upperEndpoint)
 		upperEndpoint = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{
-			Name:        "Upper",
+			Name:        "upper-grpc",
 			MaxRequests: 5,
 			Interval:    20 * time.Second,
 			Timeout:     20 * time.Second,
@@ -56,10 +57,10 @@ func NewGRPCClient(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger l
 			pb.CountReply{},
 			grpctransport.ClientBefore(opentracing.ContextToGRPC(tracer, logger)),
 		).Endpoint()
-		countEndpoint = opentracing.TraceClient(tracer, "Count")(countEndpoint)
+		countEndpoint = opentracing.TraceClient(tracer, "count-grpc")(countEndpoint)
 		countEndpoint = limiter(countEndpoint)
 		countEndpoint = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{
-			Name:        "Upper",
+			Name:        "count-grpc",
 			MaxRequests: 5,
 			Interval:    20 * time.Second,
 			Timeout:     20 * time.Second,
@@ -81,10 +82,10 @@ func NewGRPCClient(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger l
 			pb.LowercaseResponse{},
 			grpctransport.ClientBefore(opentracing.ContextToGRPC(tracer, logger)),
 		).Endpoint()
-		countEndpoint = opentracing.TraceClient(tracer, "Lower")(countEndpoint)
+		countEndpoint = opentracing.TraceClient(tracer, "lower-grpc")(countEndpoint)
 		countEndpoint = limiter(countEndpoint)
 		countEndpoint = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{
-			Name:        "Lower",
+			Name:        "lower-grpc",
 			MaxRequests: 5,
 			Interval:    20 * time.Second,
 			Timeout:     20 * time.Second,
@@ -94,7 +95,6 @@ func NewGRPCClient(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger l
 			},
 		}))(countEndpoint)
 	}
-
 
 	return addendpoint.Set{
 		UppercaseEndpoint: upperEndpoint,

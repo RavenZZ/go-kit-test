@@ -30,14 +30,13 @@ func MakeCountEndpoint(svc service.StringService) endpoint.Endpoint {
 	}
 }
 
-
-func MakeLowercaseEndpoint(svc service.StringService) endpoint.Endpoint{
+func MakeLowercaseEndpoint(svc service.StringService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req:= request.(LowercaseRequest)
-		v,err := svc.Lowercase(ctx,req.S)
-		if err !=nil{
-			return  LowercaseResponse{V:v,Err:err.Error()},nil
+		req := request.(LowercaseRequest)
+		v, err := svc.Lowercase(ctx, req.S)
+		if err != nil {
+			return LowercaseResponse{V: v, Err: err.Error()}, nil
 		}
-		return  LowercaseResponse{V:v,Err:""},nil
+		return LowercaseResponse{V: v, Err: ""}, nil
 	}
 }
