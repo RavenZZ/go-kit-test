@@ -28,10 +28,17 @@ func New(svc service.StringService, logger log.Logger, duration metrics.Histogra
 		countEndpoint = LoggingMiddleware(log.With(logger, "method", "count"))(countEndpoint)
 		countEndpoint = InstrumentingMiddleware(duration.With("method", "count"))(countEndpoint)
 	}
+	var lowerEndpoint endpoint.Endpoint
+	{
+		lowerEndpoint = MakeLowercaseEndpoint(svc)
+		lowerEndpoint = LoggingMiddleware(log.With(logger, "method", "lower"))(countEndpoint)
+		lowerEndpoint = InstrumentingMiddleware(duration.With("method", "lower"))(countEndpoint)
+	}
 
 	return Set{
 		UppercaseEndpoint: uppercaseEndpoint,
 		CountEndPoint:     countEndpoint,
+		LowercaseEndpoint: lowerEndpoint,
 	}
 }
 
